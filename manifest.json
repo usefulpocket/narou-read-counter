@@ -1,6 +1,6 @@
 {
   "description": "小説家になろう(https://syosetu.com/)の読書データを記録します。画面上に表示した本文のみをカウントします。",
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Narou Read Counter",
   "version": "0.1",
   "homepage_url": "https://github.com/usefulpocket/narou-read-counter",
@@ -17,7 +17,7 @@
     }
   ],
 
-  "action": {
+  "browser_action": {
     "default_popup": "popup.html"
   },
 
@@ -30,7 +30,7 @@
     "storage"
   ],
 
-  "browser_specific_settings": {
+  "applications": {
     "gecko": {
       "id": "narou-read-counter@usefulpocket"
     }
