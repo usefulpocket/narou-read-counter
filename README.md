@@ -37,7 +37,7 @@
 
 ## ファイル構成
 
-- `counter.js`: ページ内のテキストをカウントし、ローカルストレージに保存するスクリプト。
+- `counter.js`: ページ内のテキストをカウントし、バックグラウンドスクリプトに送信するスクリプト。
 - `options.js`: オプションページで読書データを表示するスクリプト。
 - `options.html`: オプションページのHTMLファイル。
 - `options.css`: オプションページのスタイルシート。
@@ -46,6 +46,7 @@
 - `lib/milligram.min.css`: ミリグラムCSSフレームワークのミニファイド版。
 - `lib/browser-polyfill.min.js`: WebExtension用のポリフィル。
 - `manifest.json`: 拡張機能の設定ファイル。
+- `background.js`: ローカルストレージへの保存を担当する非永続的なバックグラウンドスクリプト。
 
 ## ライセンス
 
