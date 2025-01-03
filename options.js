@@ -1,5 +1,3 @@
-import './lib/browser-polyfill.min.js';
-
 document.addEventListener('DOMContentLoaded', function() {
     function loadData() {
         browser.storage.local.get().then(function(storageData) {
