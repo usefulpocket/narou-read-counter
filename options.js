@@ -1,64 +1,98 @@
+const { openDB } = idb;
+const DB_NAME = 'NarouReadCounterDB';
+const DB_VERSION = 1;
+
+let db;
+let currentPage = 0;
+const itemsPerPage = 99999;
+
+async function getDailyCountsDescending(limit, offset) {
+  if (!db) {
+    db = await openDB(DB_NAME, DB_VERSION);
+  }
+  const tx = db.transaction('dailyCounts', 'readonly');
+  const store = tx.store;
+  const index = store.index('dateIndex');
+  const results = [];
+  let cursor = await index.openCursor(null, 'prev'); // 降順でカーソルを開く
+
+  // オフセットをスキップ
+  for (let i = 0; i < offset && cursor; i++) {
+    cursor = await cursor.continue();
+  }
+
+  // リミット分だけ取得
+  for (let i = 0; i < limit && cursor; i++) {
+    results.push(cursor.value);
+    cursor = await cursor.continue();
+  }
+
+  await tx.done;
+  return results;
+}
+
+function groupedDailyCounts(allData) {
+  const groupedData = Object.groupBy(allData, item => item.date);
+  return Object.values(groupedData).map(group => {
+    return group.reduce((acc, current) => {
+      acc.date = current.date;
+      acc.episodeCount += current.episode_count || 0;
+      acc.novelCount += 1;
+      acc.totalCount += current.count || 0;
+      return acc;
+    }, { episodeCount: 0, novelCount: 0, totalCount: 0 });
+  });
+}
+
+async function loadPage(page) {
+  const offset = page * itemsPerPage;
+  const dailyCountsList = await getDailyCountsDescending(itemsPerPage, offset);
+  const groupedData = groupedDailyCounts(dailyCountsList);
+
+  const output = document.getElementById('output');
+  output.innerHTML = ''; // 既存の内容をクリア
+
+  // ヘッダーを追加
+  let header = document.createElement('div');
+  header.className = 'row';
+  header.innerHTML = `
+      <div class="column"><strong>日付</strong></div>
+      <div class="column column-20"><strong>文字数</strong></div>
+      <div class="column column-20"><strong>作品数</strong></div>
+      <div class="column column-20"><strong>エピソード数</strong></div>
+  `;
+  output.appendChild(header);
+
+  let rows = [];
+
+  for (let data of groupedData) {
+    let div = document.createElement('div');
+    div.className = 'row';
+
+    // 日付をx月x日形式に変換
+    const date = data.date;
+    const formattedDate = `${date.getMonth() + 1}月${date.getDate()}日`;
+
+    div.innerHTML = `
+        <div class="column">${formattedDate}</div>
+        <div class="column column-20">${data.totalCount}</div>
+        <div class="column column-20">${data.novelCount}</div>
+        <div class="column column-20">${data.episodeCount}</div>
+    `;
+    rows.push(div);
+  }
+
+  rows.forEach(row => output.appendChild(row));
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    function loadData() {
-        browser.storage.local.get().then(function(storageData) {
-            let output = document.getElementById('output');
-            output.innerHTML = ''; // 既存の内容をクリア
-            let dataObject = {};
+  // 初期ページの読み込み
+  loadPage(currentPage);
+});
 
-            for (let [key, value] of Object.entries(storageData)) {
-                let ncode = key.split('_')[0];
-                if (!dataObject[ncode]) {
-                    dataObject[ncode] = {};
-                }
-                dataObject[ncode][key.split('_')[1]] = value;
-            }
-
-            // ヘッダーを追加
-            let header = document.createElement('div');
-            header.className = 'row';
-            header.innerHTML = `
-                <div class="column"><strong>Ncode</strong></div>
-                <div class="column column-20"><strong>Count</strong></div>
-                <div class="column column-40"><strong>Last Read</strong></div>
-            `;
-            output.appendChild(header);
-
-            let rows = [];
-
-            for (let [ncode, data] of Object.entries(dataObject)) {
-                let ncodeLink = `https://ncode.syosetu.com/${ncode}/`;
-                let lastReadInfo = data.lastRead ? `${data.lastRead.episode}#${data.lastRead.position}` : 'N/A';
-                let lastReadTime = data.lastRead ? 
-                    new Date(data.lastRead.time).toLocaleString('ja-JP', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit'
-                    }) : 'N/A';
-                let lastReadLink = data.lastRead ? `https://ncode.syosetu.com/${ncode}/${data.lastRead.episode}/#${data.lastRead.position}` : 'N/A';
-                let div = document.createElement('div');
-                div.className = 'row';
-                let lastReadTimestamp = data.lastRead ? new Date(data.lastRead.time).getTime() : 0;
-                div.setAttribute('data-last-read-time', lastReadTimestamp);
-                div.innerHTML = `
-                    <div class="column"><a href="${ncodeLink}" target="_blank">${ncode}</a></div>
-                    <div class="column column-20">${data.count || 0}</div>
-                    <div class="column column-20">${lastReadTime}</div>
-                    <div class="column column-20"><a href="${lastReadLink}" target="_blank">${lastReadInfo}</a></div>
-                `;
-                rows.push(div);
-            }
-
-            // 並び替え
-            rows.sort((a, b) => b.getAttribute('data-last-read-time') - a.getAttribute('data-last-read-time'));
-            rows.forEach(row => output.appendChild(row));
-        });
-    }
-
-    loadData();
-
-    // storage.localに変更があった場合に再読み込み
-    browser.storage.onChanged.addListener(loadData);
+browser.runtime.onMessage.addListener((message) => {
+  if (message.action === 'dataChanged') {
+    loadPage(currentPage);
+  }
+  return true;
 });
