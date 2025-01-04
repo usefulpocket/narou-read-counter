@@ -45,6 +45,7 @@
 - `popup.html`: ポップアップのHTMLファイル。
 - `lib/milligram.min.css`: ミリグラムCSSフレームワークのミニファイド版。
 - `lib/browser-polyfill.min.js`: WebExtension用のポリフィル。
+- `lib/umd.js`: IndexedDBを簡単に操作するためのidbライブラリ。
 - `manifest.json`: 拡張機能の設定ファイル。
 - `background.js`: ローカルストレージへの保存を担当する非永続的なバックグラウンドスクリプト。
 
@@ -56,3 +57,4 @@
 
 - [Milligram](https://milligram.io/) - MITライセンス。
 - [webextension-polyfill](https://github.com/mozilla/webextension-polyfill) - Mozilla Public License 2.0。
+- [idb](https://github.com/jakearchibald/idb) - ISC License (ISC)。

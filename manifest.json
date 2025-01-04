@@ -11,7 +11,7 @@
   },
 
   "background": {
-    "scripts": ["lib/browser-polyfill.min.js", "background.js"],
+    "scripts": ["lib/browser-polyfill.min.js", "lib/umd.js", "background.js"],
     "persistent": false
   },
 
