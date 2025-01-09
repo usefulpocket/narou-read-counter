@@ -60,7 +60,7 @@ class AsyncQueueStack {
 
 function notifyOptionsPage() {
   const views = browser.extension.getViews({ type: 'tab' });
-  const optionsPage = views.find(view => view.location.pathname === '/options.html');
+  const optionsPage = views.find(view => view.location.pathname === '/options/index.html');
   if (optionsPage) {
     browser.runtime.sendMessage({ action: 'dataChanged' });
   }
