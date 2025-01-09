@@ -7,7 +7,18 @@ export default defineConfig({
   base: '/options',
   build: {
     outDir: '../options',
-    emptyOutDir: true
+    emptyOutDir: true,
+    sourcemap: true,
+    watch: {
+      include: 'options-src/**'
+    },
+    rollupOptions: {
+      output: {
+        entryFileNames: `assets/[name].js`,
+        chunkFileNames: `assets/[name].js`,
+        assetFileNames: `assets/[name].[ext]`,
+      },
+    },
   },
   plugins: [
     svelte(),

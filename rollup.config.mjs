@@ -2,7 +2,7 @@ import copy from 'rollup-plugin-copy';
 
 export default [
   {
-    input: 'options.js',
+    input: 'main.js',
     plugins: [
       copy({
         targets: [
