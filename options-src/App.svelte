@@ -1,12 +1,23 @@
 <script lang="ts">
   import browser from 'webextension-polyfill';
   import { getDailyCounts } from './lib/db';
-  import { groupedDailyCounts } from './lib/utils';
+  import { groupedDailyCounts, formatYearMonth, nextMonths, previousMonths } from './lib/utils';
   import DailyStats from './components/DailyStats.svelte';
 
   let dailyCounts = $state([]);
   let dailyStats = $derived(groupedDailyCounts(dailyCounts));
-  let currentDate = new Date();
+  let currentDate = $state(new Date());
+  let currentYearMonth = $derived(formatYearMonth(currentDate));
+
+  function nextPage() {
+    currentDate = nextMonths(currentDate);
+    loadPage(currentDate);
+  }
+
+  function previousPage() {
+    currentDate = previousMonths(currentDate);
+    loadPage(currentDate);
+  }
 
   async function loadPage(date: Date) {
     dailyCounts = await getDailyCounts(date);
@@ -27,8 +38,12 @@
 
 <div class="container">
   <h1>読書データ</h1>
-</div>
-<div class="container">
+
+  <div class="page-controls">
+    <span class="float-left">{currentYearMonth}</span>
+    <button class="button button-clear" onclick={previousPage}>＜</button>
+    <button class="button button-clear" onclick={nextPage}>＞</button>
+  </div>
   {#if dailyStats.length === 0}
     <p>データがありません</p>
   {:else}
