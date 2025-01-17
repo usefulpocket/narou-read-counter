@@ -38,12 +38,10 @@
 ## ファイル構成
 
 - `counter.js`: ページ内のテキストをカウントし、バックグラウンドスクリプトに送信するスクリプト。
-- `options.js`: オプションページで読書データを表示するスクリプト。
-- `options.html`: オプションページのHTMLファイル。
-- `options.css`: オプションページのスタイルシート。
+- `options/index.html`: オプションページのHTMLファイル。Svelteにより生成。
+- `options-src/*`: オプションページ用のSvelteプロジェクトフォルダ。
 - `popup.js`: ポップアップを開いた際にオプションページを表示するスクリプト。
 - `popup.html`: ポップアップのHTMLファイル。
-- `lib/milligram.min.css`: ミリグラムCSSフレームワークのミニファイド版。
 - `lib/browser-polyfill.min.js`: WebExtension用のポリフィル。
 - `lib/umd.js`: IndexedDBを簡単に操作するためのidbライブラリ。
 - `manifest.json`: 拡張機能の設定ファイル。
@@ -55,6 +53,5 @@
 
 このプロジェクトでは以下のライブラリを使用しています：
 
-- [Milligram](https://milligram.io/) - MITライセンス。
 - [webextension-polyfill](https://github.com/mozilla/webextension-polyfill) - Mozilla Public License 2.0。
 - [idb](https://github.com/jakearchibald/idb) - ISC License (ISC)。

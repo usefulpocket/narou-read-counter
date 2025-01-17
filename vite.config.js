@@ -26,8 +26,6 @@ export default defineConfig({
       targets: [
         { src: 'node_modules/webextension-polyfill/dist/browser-polyfill.min.js', dest: 'lib' },
         { src: 'node_modules/webextension-polyfill/dist/browser-polyfill.min.js.map', dest: 'lib' },
-        { src: 'node_modules/milligram/dist/milligram.min.css', dest: 'lib' },
-        { src: 'node_modules/milligram/dist/milligram.min.css.map', dest: 'lib' },
         { src: 'node_modules/idb/build/umd.js', dest: 'lib' }
       ]
     })

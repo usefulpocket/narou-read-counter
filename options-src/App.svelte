@@ -1,7 +1,12 @@
 <script lang="ts">
   import browser from 'webextension-polyfill';
   import { getDailyCounts } from './lib/db';
-  import { groupedDailyCounts, formatYearMonth, nextMonths, previousMonths } from './lib/utils';
+  import {
+    groupedDailyCounts,
+    formatYearMonth,
+    nextMonths,
+    previousMonths,
+  } from './lib/utils';
   import DailyStats from './components/DailyStats.svelte';
 
   let dailyCounts = $state([]);
@@ -23,7 +28,7 @@
     dailyCounts = await getDailyCounts(date);
   }
 
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     // 初期ページの読み込み
     loadPage(currentDate);
   });
@@ -36,21 +41,25 @@
   });
 </script>
 
-<div class="container">
+<div class="container pt-4">
   <h1>読書データ</h1>
 
-  <div class="page-controls">
-    <span class="float-left">{currentYearMonth}</span>
-    <button class="button button-clear" onclick={previousPage}>＜</button>
-    <button class="button button-clear" onclick={nextPage}>＞</button>
+  <div class="flex items-end justify-between">
+    <div class="px-3 text-xl font-bold">{currentYearMonth}</div>
+    <div class="join">
+      <button class="btn btn-outline join-item" onclick={previousPage}>
+        ＜
+      </button>
+      <button class="btn btn-outline join-item" onclick={nextPage}>＞</button>
+    </div>
   </div>
+  <br />
   {#if dailyStats.length === 0}
-    <p>データがありません</p>
+    <p class="m-3">データがありません</p>
   {:else}
     <DailyStats {dailyStats} />
   {/if}
 </div>
 
 <style>
-
 </style>
